@@ -6,6 +6,7 @@ client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
 st.title("🧠 AI Research Assistant")
+st.markdown("_by Rhanny_AITeam_", unsafe_allow_html=True)
 st.write("""
 This assistant helps you discover:
 - The latest **AI & automation tools**
