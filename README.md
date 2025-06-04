@@ -35,9 +35,7 @@ api_key = "sk-...your-openai-key..."
 If you're using Streamlit Cloud, add your secret directly via the Secrets Manager in the dashboard.
 
 3. Install requirements
-bash
-Copy
-Edit
+
 pip install -r requirements.txt
 4. Run the app
 
@@ -48,9 +46,6 @@ Custom CSS styling adds a light green border around the input area.
 Includes a system prompt to guide GPT's response style and topics.
 
 🖥️ File Structure
-graphql
-Copy
-Edit
 .
 ├── streamlit_app.py           # Main Streamlit chatbot app
 ├── .streamlit/
