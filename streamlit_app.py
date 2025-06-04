@@ -1,75 +1,99 @@
-from openai import OpenAI
+# insightful_streamlit_app.py (Refactored + Enhanced UI)
+
 import streamlit as st
+from datetime import datetime, timedelta
+from fetch_data import fetch_data
+from gpt_analysis import (
+    analyze_behavioral_trends,
+    analyze_productivity_bottlenecks,
+    analyze_performance_forecasts,
+    analyze_task_allocation_strategy,
+    summarize_team_with_gpt
+)
+import pandas as pd
+import os
 
-# Initialize OpenAI client using secrets
-client = OpenAI(api_key=st.secrets["openai"]["api_key"])
-
-# App configuration
-st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
-st.title("🧠 AI Research Assistant")
-st.markdown("_by Rhanny_AITeam_", unsafe_allow_html=True)
-
-# Light green border around chat input
+# Page setup
+st.set_page_config(page_title="AI-Powered Productivity Analysis", layout="centered")
 st.markdown("""
 <style>
+    .main-box {
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
     div[data-testid="stChatInput"] textarea {
         border: 2px solid #90EE90 !important;
         border-radius: 5px;
     }
 </style>
+<div class="main-box">
 """, unsafe_allow_html=True)
 
-# Intro text
-st.write("""
-This assistant helps you discover:
-- The latest **AI & automation tools**
-- **Free, paid, or trial** versions of platforms
-- Curated **video tutorials** and **YouTube channels**
-- Top **free courses** in AI/Machine Learning
-- **Newest articles** and experimental apps worth tracking
+st.title("📊 OpenAI Employee Productivity Reports")
+st.markdown("_by Rhanny_AITeam_", unsafe_allow_html=True)
 
-Just ask a question and get a research-grade response.
-""")
+# Date setup
+yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%A, %B %d, %Y")
+st.markdown(f"📅 **Data Date**: _{yesterday}_")
 
-# System role and conversation history setup
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are an advanced AI Research Assistant specializing in discovering and recommending:\n"
-                "- ✅ Useful AI and automation tools, with clear labels (Free, Paid, Trial)\n"
-                "- 🎥 High-quality recent video tutorials (YouTube, Vimeo, etc.)\n"
-                "- 📰 Trending articles on AI/automation\n"
-                "- 🎓 Free/paid AI & ML courses (Coursera, edX, Udemy, etc.)\n"
-                "- 🧪 Experimental, open-source, or beta-stage tools\n\n"
-                "For each resource, include:\n"
-                "- A short description\n"
-                "- A link if available\n"
-                "- Whether it’s Free, Paid, or Free Trial\n\n"
-                "Stay up to date with trends from 2024–2025. Be concise, useful, and cite platforms when relevant."
-            )
-        }
-    ]
+# Session state initialization
+if "dataframes" not in st.session_state:
+    st.session_state["dataframes"] = None
+    st.session_state["team_summaries"] = None
 
-# Display prior messages
-for msg in st.session_state.messages[1:]:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+# Fetch data button
+if st.button(f"📥 Fetch Insightful Data ({yesterday})"):
+    st.info("Pulling data and performing screenshot OCR analysis...")
+    try:
+        dataframes, team_summaries = fetch_data()
+        st.session_state["dataframes"] = dataframes
+        st.session_state["team_summaries"] = team_summaries
+        st.success("✅ Data fetched and team summaries ready.")
+    except Exception as e:
+        st.error(f"❌ Error: {e}")
 
-# Chat input and GPT response
-if prompt := st.chat_input("Ask for tools, videos, free courses, or automation help..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+# If data is available, allow GPT analysis
+if st.session_state["dataframes"] is not None:
+    st.subheader("🧠 Generate Organization-Level GPT Insights")
+    col1, col2 = st.columns(2)
 
-    stream = client.chat.completions.create(
-        model="gpt-4",
-        messages=st.session_state.messages,
-        stream=True
-    )
+    with col1:
+        if st.button("🧠 Behavioral Trends"):
+            st.info("Analyzing behavior trends...")
+            st.write(analyze_behavioral_trends(st.session_state["dataframes"]))
 
-    with st.chat_message("assistant"):
-        response = st.write_stream(stream)
+        if st.button("📈 Performance Forecasts"):
+            st.info("Forecasting performance...")
+            st.write(analyze_performance_forecasts(st.session_state["dataframes"]))
 
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    with col2:
+        if st.button("🚨 Productivity Bottlenecks"):
+            st.info("Checking for bottlenecks...")
+            st.write(analyze_productivity_bottlenecks(st.session_state["dataframes"]))
+
+        if st.button("🗂️ Task Allocation Strategy"):
+            st.info("Analyzing task allocation...")
+            st.write(analyze_task_allocation_strategy(st.session_state["dataframes"]))
+
+# Per-Team GPT Summary Dropdown
+if "team_summaries" in st.session_state and st.session_state["team_summaries"]:
+    st.subheader("📂 Team-Based GPT Summary")
+    team_ids = list(st.session_state["team_summaries"].keys())
+    selected_team = st.selectbox("Select a team:", team_ids)
+
+    if st.button("🤖 Analyze Selected Team with GPT"):
+        summary = st.session_state["team_summaries"][selected_team]
+        st.write(summarize_team_with_gpt(summary))
+
+    if st.button("💾 Export This Team's Summary"):
+        os.makedirs("exports", exist_ok=True)
+        summary = st.session_state["team_summaries"][selected_team]
+        df = pd.DataFrame([summary])
+        file_path = f"exports/{selected_team}_summary.csv"
+        df.to_csv(file_path, index=False)
+        st.success(f"✅ Saved to {file_path}")
+
+st.markdown("""</div>""", unsafe_allow_html=True)
