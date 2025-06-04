@@ -28,11 +28,10 @@ cd ai-research-assistant
 2. Add your API key via Streamlit Secrets
 Create a file at .streamlit/secrets.toml:
 
-toml
-Copy
-Edit
+
 [openai]
 api_key = "sk-...your-openai-key..."
+
 If you're using Streamlit Cloud, add your secret directly via the Secrets Manager in the dashboard.
 
 3. Install requirements
@@ -41,17 +40,11 @@ Copy
 Edit
 pip install -r requirements.txt
 4. Run the app
-bash
-Copy
-Edit
-streamlit run chatbot_app.py
+
 🧠 How It Works
 Uses OpenAI's GPT-4 via the openai Python SDK.
-
 Maintains chat history using st.session_state.
-
 Custom CSS styling adds a light green border around the input area.
-
 Includes a system prompt to guide GPT's response style and topics.
 
 🖥️ File Structure
@@ -59,33 +52,27 @@ graphql
 Copy
 Edit
 .
-├── chatbot_app.py            # Main Streamlit chatbot app
+├── streamlit_app.py           # Main Streamlit chatbot app
 ├── .streamlit/
 │   └── secrets.toml          # Secure API key storage
 ├── requirements.txt          # Dependencies
+├── screenshots
+│   └── Screenshot202025.png  # App Screenshot        
 └── README.md
+
 ✨ Custom Features
 ✅ Italicized name/credit line under the title
-
 ✅ Chat input box with light green border
-
 ✅ Real-time streaming of GPT responses
-
 ✅ Clean and simple UI for casual users or researchers
 
 🧑‍💻 Credit
-Built by Rhanny_AITeam
+Enhanced and Customized by Rhanny_AITeam
 
 📜 License
 MIT
 
-yaml
-Copy
-Edit
-
 ---
-
-Let me know if you'd like me to include deployment instructions (e.g., for Streamlit Cloud or Hugging Face Spaces), or generate the `requirements.txt` file as well.
 
 
 
