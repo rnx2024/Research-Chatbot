@@ -14,7 +14,7 @@ Simply ask a question — the assistant uses GPT-4 to deliver concise, curated i
 
 ## 📸 Preview
 
-![Screenshot Placeholder](https://via.placeholder.com/800x400.png?text=AI+Research+Assistant+Preview)
+![Screenshot Placeholder]([https://github.com/rnx2024/chatbot/blob/main/screenshots/Screenshot%202025-06-05%20040425.png])
 
 ---
 
