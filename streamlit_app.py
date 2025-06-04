@@ -1,6 +1,9 @@
 import streamlit as st
 from openai import OpenAI
 
+# Use OpenAI key securely from Streamlit secrets
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+
 st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
 st.title("🧠 AI Research Assistant")
 st.write("""
@@ -14,53 +17,45 @@ This assistant helps you discover:
 Just ask a question and get a research-grade response.
 """)
 
-# OpenAI Key input
-openai_api_key = st.text_input("🔐 Enter your OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
-    client = OpenAI(api_key=openai_api_key)
+# System role and conversation history setup
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are an advanced AI Research Assistant specializing in discovering and recommending:\n"
+                "- ✅ Useful AI and automation tools, with clear labels (Free, Paid, Trial)\n"
+                "- 🎥 High-quality recent video tutorials (YouTube, Vimeo, etc.)\n"
+                "- 📰 Trending articles on AI/automation\n"
+                "- 🎓 Free/paid AI & ML courses (Coursera, edX, Udemy, etc.)\n"
+                "- 🧪 Experimental, open-source, or beta-stage tools\n\n"
+                "For each resource, include:\n"
+                "- A short description\n"
+                "- A link if available\n"
+                "- Whether it’s Free, Paid, or Free Trial\n\n"
+                "Stay up to date with trends from 2024–2025. Be concise, useful, and cite platforms when relevant."
+            )
+        }
+    ]
 
-    # Initialize system message with clear instructions for the assistant role
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {
-                "role": "system",
-                "content": (
-                    "You are an advanced AI Research Assistant specializing in discovering and recommending:"
-                    "\n\n✅ Useful AI and automation tools, with clear labels (Free, Paid, Trial)"
-                    "\n🎥 Recent high-quality video tutorials (YouTube, Vimeo, etc.)"
-                    "\n📰 Recent or trending articles on AI and automation"
-                    "\n🎓 Free and paid courses for AI and machine learning (Coursera, edX, Udemy, etc.)"
-                    "\n🧪 Experimental, open-source, or beta-stage tools"
-                    "\n\nFor each resource, where possible, include:"
-                    "\n- A brief description"
-                    "\n- A link (if available)"
-                    "\n- Whether it’s Free, Paid, or Free Trial"
-                    "\n\nStay current with trends from 2024–2025. Be concise, highly useful, and cite known platforms when relevant."
-                )
-            }
-        ]
+# Display prior messages
+for msg in st.session_state.messages[1:]:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-    # Show prior chat history
-    for msg in st.session_state.messages[1:]:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+# Chat input and GPT response
+if prompt := st.chat_input("Ask for tools, videos, free courses, or automation help..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-    # Prompt input from user
-    if prompt := st.chat_input("Ask for tools, videos, free courses, or automation help..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+    stream = client.chat.completions.create(
+        model="gpt-4",
+        messages=st.session_state.messages,
+        stream=True
+    )
 
-        # GPT Response (streamed)
-        stream = client.chat.completions.create(
-            model="gpt-4",
-            messages=st.session_state.messages,
-            stream=True
-        )
+    with st.chat_message("assistant"):
+        response = st.write_stream(stream)
 
-        with st.chat_message("assistant"):
-            response = st.write_stream(stream)
-
-        st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.messages.append({"role": "assistant", "content": response})
