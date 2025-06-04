@@ -1,12 +1,25 @@
 from openai import OpenAI
 import streamlit as st
 
+# Initialize OpenAI client using secrets
 client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
-
+# App configuration
 st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
 st.title("🧠 AI Research Assistant")
 st.markdown("_by Rhanny_AITeam_", unsafe_allow_html=True)
+
+# Light green border around chat input
+st.markdown("""
+<style>
+    div[data-testid="stChatInput"] textarea {
+        border: 2px solid #90EE90 !important;
+        border-radius: 5px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Intro text
 st.write("""
 This assistant helps you discover:
 - The latest **AI & automation tools**
