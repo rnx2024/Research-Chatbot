@@ -8,7 +8,10 @@ st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
 st.title("🧠 AI Research Assistant")
 
 # Byline under title
-st.markdown("###### Powered by BEST AI Team | v1.0 | June 2025")
+st.markdown(
+    "<div style='font-size: 12px; color: gray;'>Powered by OpenAI | BEST AI Team | v1.0 | June 2025</div>",
+    unsafe_allow_html=True
+)
 
 # Persona selector
 persona = st.selectbox(
