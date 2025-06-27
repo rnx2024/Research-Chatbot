@@ -77,12 +77,16 @@ if prompt := st.chat_input("Ask your research question..."):
         stream=True
     )
 
-    full_response = ""
+   response = client.chat.completions.create(
+    model="gpt-4",
+    messages=st.session_state.messages
+)
+
+full_response = response.choices[0].message.content
+
 with st.chat_message("assistant"):
-    response_container = st.empty()
-    for chunk in stream:
-        if hasattr(chunk.choices[0], "delta") and hasattr(chunk.choices[0].delta, "content"):
-            token = chunk.choices[0].delta.content
-            full_response += token
-            response_container.markdown(full_response)
+    st.markdown(full_response)
+
+st.session_state.messages.append({"role": "assistant", "content": full_response})
+
 
