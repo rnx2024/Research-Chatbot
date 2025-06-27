@@ -78,12 +78,11 @@ if prompt := st.chat_input("Ask your research question..."):
     )
 
     full_response = ""
-    with st.chat_message("assistant"):
-        response_container = st.empty()
-        for chunk in stream:
-            if chunk.choices[0].delta.get("content"):
-                token = chunk.choices[0].delta.content
-                full_response += token
-                response_container.markdown(full_response)
+with st.chat_message("assistant"):
+    response_container = st.empty()
+    for chunk in stream:
+        if hasattr(chunk.choices[0], "delta") and hasattr(chunk.choices[0].delta, "content"):
+            token = chunk.choices[0].delta.content
+            full_response += token
+            response_container.markdown(full_response)
 
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
