@@ -6,7 +6,11 @@ client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
 st.title("🧠 AI Research Assistant")
-st.markdown("Powered by OpenAI | BEST AI Team | v2.0 | June 2025")
+st.markdown(
+    "<div style='font-size: 12px; color: gray;'>Powered by OpenAI | BEST AI Team | v1.0 | June 2025</div>",
+    unsafe_allow_html=True
+)
+
 
 # === Step 1: Persona Selector ===
 persona = st.selectbox(
