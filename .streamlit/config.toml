@@ -1,0 +1,7 @@
+[theme]
+base="light"
+primaryColor="#3E4E88"         # Deep blue
+backgroundColor="#F8F9FA"      # Light gray/white
+secondaryBackgroundColor="#E5E7EB"  # Muted gray
+textColor="#1F2937"            # Rich dark gray (not full black)
+font="sans serif"              # Clean, modern font
