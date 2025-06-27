@@ -6,7 +6,7 @@ client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🧠")
 st.title("🧠 AI Research Assistant")
-page_icon="ai_icon.png" 
+page_icon="ai.png" 
 
 # Byline under title
 st.markdown(
