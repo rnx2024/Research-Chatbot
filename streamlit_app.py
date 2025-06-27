@@ -63,26 +63,19 @@ for msg in st.session_state.messages[1:]:
         st.markdown(msg["content"])
 
 # Prompt input
-if prompt := st.chat_input("Ask your research question..."):
+# Chat input and GPT response
+if prompt := st.chat_input("Ask for tools, videos, free courses, or automation help..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Stream response using original structure
     stream = client.chat.completions.create(
         model="gpt-4",
         messages=st.session_state.messages,
         stream=True
     )
 
-    full_response = ""
     with st.chat_message("assistant"):
-        response_container = st.empty()
-        for chunk in stream:
-            # Original structure preserved — assumes delta exists
-            if chunk.choices[0].delta.get("content"):
-                token = chunk.choices[0].delta.content
-                full_response += token
-                response_container.markdown(full_response)
+        response = st.write_stream(stream)
 
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    st.session_state.messages.append({"role": "assistant", "content": response})
